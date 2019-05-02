@@ -1,0 +1,22 @@
+{
+    "failures": [
+        {
+            "type": "connector",
+            "connector": "local-file-source",
+            "state": "FAILED",
+            "worker_id": "kafka-connect:8083"
+        },
+        {
+            "type": "task",
+            "connector": "local-file-source",
+            "id": 0,
+            "state": "FAILED",
+            "worker_id": "kafka-connect:8083",
+            "trace": null
+        }
+    ],
+    "failure_states": [
+        "FAILED"
+    ],
+    "healthy": false
+}

@@ -1,0 +1,16 @@
+{
+    "failures": [
+        {
+            "type": "task",
+            "connector": "s3-sink",
+            "id": 2,
+            "state": "FAILED",
+            "worker_id": "my.worker.name:8083",
+            "trace": "trace message here"
+        }
+    ],
+    "failure_states": [
+        "FAILED"
+    ],
+    "healthy": false
+}

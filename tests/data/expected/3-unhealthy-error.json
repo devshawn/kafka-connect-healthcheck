@@ -1,0 +1,8 @@
+{
+    "healthy": false,
+    "message": "Exception raised while attempting to calculate health result, assuming unhealthy.",
+    "error": "HTTPConnectionPool(host='unknown-hostname', port=8083): Max retries exceeded with url: /connectors",
+    "failure_states": [
+        "FAILED"
+    ]
+}

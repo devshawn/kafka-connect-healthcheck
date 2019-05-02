@@ -1,0 +1,30 @@
+{
+    "failures": [
+        {
+            "type": "connector",
+            "connector": "s3-source",
+            "state": "FAILED",
+            "worker_id": "my.worker.name:8083"
+        },
+        {
+            "type": "task",
+            "connector": "s3-source",
+            "id": 3,
+            "state": "FAILED",
+            "worker_id": "my.worker.name:8083",
+            "trace": null
+        },
+        {
+            "type": "task",
+            "connector": "s3-sink",
+            "id": 2,
+            "state": "FAILED",
+            "worker_id": "my.worker.name:8083",
+            "trace": null
+        }
+    ],
+    "failure_states": [
+        "FAILED"
+    ],
+    "healthy": false
+}

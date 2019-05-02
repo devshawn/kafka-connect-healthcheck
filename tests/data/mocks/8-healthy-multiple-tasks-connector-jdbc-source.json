@@ -1,0 +1,30 @@
+{
+    "name": "jdbc-source",
+    "connector": {
+        "state": "RUNNING",
+        "worker_id": "my.worker.name:8083"
+    },
+    "tasks": [
+        {
+            "id": 0,
+            "state": "RUNNING",
+            "worker_id": "my.worker.name:8083"
+        },
+        {
+            "id": 2,
+            "state": "RUNNING",
+            "worker_id": "my.worker.name:8083"
+        },
+        {
+            "id": 3,
+            "state": "RUNNING",
+            "worker_id": "my.worker.name:8083"
+        },
+        {
+            "id": 4,
+            "state": "RUNNING",
+            "worker_id": "my.worker.name:8083"
+        }
+    ],
+    "type": "source"
+}

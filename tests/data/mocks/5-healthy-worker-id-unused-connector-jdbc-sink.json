@@ -1,0 +1,15 @@
+{
+    "name": "jdbc-sink",
+    "connector": {
+        "state": "RUNNING",
+        "worker_id": "some-other-worker"
+    },
+    "tasks": [
+        {
+            "id": 0,
+            "state": "RUNNING",
+            "worker_id": "some-other-worker"
+        }
+    ],
+    "type": "source"
+}

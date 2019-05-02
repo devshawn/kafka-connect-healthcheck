@@ -1,0 +1,15 @@
+{
+    "name": "jdbc-sink",
+    "connector": {
+        "state": "RUNNING",
+        "worker_id": "test-worker"
+    },
+    "tasks": [
+        {
+            "id": 0,
+            "state": "FAILED",
+            "worker_id": "kafka-connect:8083"
+        }
+    ],
+    "type": "source"
+}
