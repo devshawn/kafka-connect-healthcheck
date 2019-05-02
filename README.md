@@ -1,5 +1,8 @@
 # kafka-connect-healthcheck
 
+[![Build Status](https://travis-ci.org/devshawn/kafka-connect-healthcheck.svg?branch=master)](https://travis-ci.org/devshawn/kafka-connect-healthcheck) [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/devshawn/kafka-connect-healthcheck.svg)](https://hub.docker.com/r/devshawn/kafka-connect-healthcheck) ![PyPI](https://img.shields.io/pypi/v/kafka-connect-healthcheck.svg?color=blue) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/kafka-connect-healthcheck.svg) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
+
 A simple healthcheck wrapper to monitor Kafka Connect.
 
 
