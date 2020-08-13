@@ -115,6 +115,7 @@ class Health:
 
     def get_connector_names(self):
         response = requests.get("{}/connectors".format(self.connect_url))
+        response.raise_for_status()
         response_json = response.json()
         return response_json
 
