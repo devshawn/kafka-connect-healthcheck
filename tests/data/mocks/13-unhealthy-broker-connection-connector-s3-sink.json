@@ -1,0 +1,15 @@
+{
+    "name": "s3-sink",
+    "connector": {
+        "state": "RUNNING",
+        "worker_id": "my.worker.name:8083"
+    },
+    "tasks": [
+        {
+            "id": 0,
+            "state": "RUNNING",
+            "worker_id": "other.worker:8083"
+        }
+    ],
+    "type": "source"
+}

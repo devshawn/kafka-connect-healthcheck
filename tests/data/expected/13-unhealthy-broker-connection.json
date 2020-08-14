@@ -1,0 +1,12 @@
+{
+    "failures": [
+        {
+            "type": "broker",
+            "connector": "s3-sink"
+        }
+    ],
+    "failure_states": [
+        "FAILED"
+    ],
+    "healthy": false
+}
