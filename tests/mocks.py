@@ -25,6 +25,14 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
                     path = os.path.join(os.getcwd(), "./tests/data/mocks/{}-connector-{}.json".format(self.mock_name, connector_name))
                     with open(path, "r") as f:
                         self.response(status_code, payload=f.read())
+                else:
+                    connector_name = split_path[2]
+                    details_status_code = 503 if "unhealthy-broker" in self.mock_name else 200
+                    path = os.path.join(os.getcwd(),
+                                        "./tests/data/mocks/healthy-connector-details.json".format(self.mock_name, connector_name))
+                    with open(path, "r") as f:
+                        self.response(details_status_code, payload=f.read())
+
         except Exception as ex:
             print("Error while handling mock GET request: {}".format(ex))
             self.response(500, "")
