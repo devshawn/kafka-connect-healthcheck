@@ -47,8 +47,10 @@ class Health:
         return health_result
 
     def handle_healthcheck(self, connector_statuses, health_result):
+        connectors_on_this_worker = False
         for connector in connector_statuses:
             if self.is_on_this_worker(connector["worker_id"]):
+                connectors_on_this_worker = True
                 if self.is_in_unhealthy_state(connector["state"]):
                     logging.warning("Connector '{}' is unhealthy in failure state: {}".format(connector["name"], connector["state"]))
                     health_result["failures"].append({
@@ -60,6 +62,19 @@ class Health:
                 else:
                     logging.info("Connector '{}' is healthy in state: {}".format(connector["name"], connector["state"]))
             self.handle_task_healthcheck(connector, health_result)
+        if not connectors_on_this_worker and connector_statuses:
+            self.handle_broker_healthcheck(health_result, connector_statuses[0]["name"])
+
+    def handle_broker_healthcheck(self, health_result, connector_name):
+        try:
+            self.get_connector_details(connector_name)
+        except Exception as ex:
+            logging.error("Error while attempting to get details for {}. Assuming unhealthy. Error: {}".format(connector_name, ex))
+            logging.error(ex)
+            health_result["failures"].append({
+                "type": "broker",
+                "connector": connector_name,
+            })
 
     def handle_task_healthcheck(self, connector, health_result):
         for task in connector["tasks"]:
@@ -105,6 +120,12 @@ class Health:
 
     def get_connector_status(self, connector_name):
         response = requests.get("{}/connectors/{}/status".format(self.connect_url, connector_name))
+        response_json = response.json()
+        return response_json
+
+    def get_connector_details(self, connector_name):
+        response = requests.get("{}/connectors/{}".format(self.connect_url, connector_name))
+        response.raise_for_status()
         response_json = response.json()
         return response_json
 
