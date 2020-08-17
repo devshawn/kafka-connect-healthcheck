@@ -36,7 +36,8 @@ def main():
     logging.info("Initializing healthcheck server...")
 
     server_class = HTTPServer
-    health_object = health.Health(args.connect_url, args.connect_worker_id, args.unhealthy_states.split(","))
+    health_object = health.Health(args.connect_url, args.connect_worker_id, args.unhealthy_states.split(","),
+                                  args.basic_auth)
     handler = partial(RequestHandler, health_object)
     httpd = server_class(("0.0.0.0", args.healthcheck_port), handler)
     logging.info("Healthcheck server started at: http://localhost:{}".format(args.healthcheck_port))

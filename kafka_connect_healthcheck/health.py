@@ -21,11 +21,14 @@ from kafka_connect_healthcheck import helpers
 
 class Health:
 
-    def __init__(self, connect_url, worker_id, unhealthy_states):
+    def __init__(self, connect_url, worker_id, unhealthy_states, auth):
         self.connect_url = connect_url
         self.worker_id = worker_id
         self.unhealthy_states = [x.upper().strip() for x in unhealthy_states]
         self.log_initialization_values()
+        self.kwargs = {}
+        if auth:
+            self.kwargs['auth'] = tuple(auth.split(':'))
 
     def get_health_result(self):
         try:
@@ -114,17 +117,17 @@ class Health:
         }
 
     def get_connector_names(self):
-        response = requests.get("{}/connectors".format(self.connect_url))
+        response = requests.get("{}/connectors".format(self.connect_url), **self.kwargs)
         response_json = response.json()
         return response_json
 
     def get_connector_status(self, connector_name):
-        response = requests.get("{}/connectors/{}/status".format(self.connect_url, connector_name))
+        response = requests.get("{}/connectors/{}/status".format(self.connect_url, connector_name), **self.kwargs)
         response_json = response.json()
         return response_json
 
     def get_connector_details(self, connector_name):
-        response = requests.get("{}/connectors/{}".format(self.connect_url, connector_name))
+        response = requests.get("{}/connectors/{}".format(self.connect_url, connector_name), **self.kwargs)
         response.raise_for_status()
         response_json = response.json()
         return response_json
