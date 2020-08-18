@@ -59,7 +59,7 @@ def get_parser():
                         help="The level of logs to be shown. Default: INFO.")
 
     parser.add_argument("--basic-auth",
-                        default=os.environ.get("HEALTHCHECK_BASIC_AUTH", "").upper(),
+                        default=os.environ.get("HEALTHCHECK_BASIC_AUTH", ""),
                         dest="basic_auth",
                         nargs="?",
                         help="Colon-separated credentials for basic HTTP authentication. Default: empty.")
