@@ -16,6 +16,7 @@
 import logging
 
 import requests
+
 from kafka_connect_healthcheck import helpers
 
 
@@ -25,10 +26,10 @@ class Health:
         self.connect_url = connect_url
         self.worker_id = worker_id
         self.unhealthy_states = [x.upper().strip() for x in unhealthy_states]
-        self.log_initialization_values()
         self.kwargs = {}
-        if auth:
-            self.kwargs['auth'] = tuple(auth.split(':'))
+        if auth and ":" in auth:
+            self.kwargs["auth"] = tuple(auth.split(":"))
+            self.log_initialization_values()
 
     def get_health_result(self):
         try:
@@ -141,6 +142,8 @@ class Health:
     def log_initialization_values(self):
         logging.info("Server will report unhealthy for states: '{}'".format(", ".join(self.unhealthy_states)))
         logging.info("Server will healthcheck against Kafka Connect at: {}".format(self.connect_url))
+        if "auth" in self.kwargs:
+            logging.info("Server will use basic authentication against Kafka Connect")
         if self.worker_id is not None:
             logging.info("Server will healthcheck connectors and tasks for worker with id '{}'".format(self.worker_id))
         else:

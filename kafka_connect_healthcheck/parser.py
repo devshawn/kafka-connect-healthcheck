@@ -52,15 +52,16 @@ def get_parser():
                         help="A comma separated lists of connector and task states to be marked as unhealthy. Default: FAILED."
                         )
 
+    parser.add_argument("--basic-auth",
+                        default=os.environ.get("HEALTHCHECK_BASIC_AUTH", ""),
+                        dest="basic_auth",
+                        nargs="?",
+                        help="Colon-separated credentials for basic HTTP authentication. Default: empty.")
+
     parser.add_argument("--log-level",
                         default=os.environ.get("HEALTHCHECK_LOG_LEVEL", "INFO").upper(),
                         dest="log_level",
                         nargs="?",
                         help="The level of logs to be shown. Default: INFO.")
 
-    parser.add_argument("--basic-auth",
-                        default=os.environ.get("HEALTHCHECK_BASIC_AUTH", ""),
-                        dest="basic_auth",
-                        nargs="?",
-                        help="Colon-separated credentials for basic HTTP authentication. Default: empty.")
     return parser

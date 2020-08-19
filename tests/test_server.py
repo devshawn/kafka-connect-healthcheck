@@ -19,6 +19,7 @@ scenario_10 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "my.worker.name:8083"}, "10-unh
 scenario_11 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "my.worker.name:8083"}, "11-healthy-no-connectors")
 scenario_12 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "my.worker.name:8083"}, "12-unhealthy-task-with-trace")
 scenario_13 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "unhealthy.worker:8083"}, "13-unhealthy-broker-connection")
+scenario_14 = ({"HEALTHCHECK_BASIC_AUTH": "username:password"}, "14-basic-auth")
 other_scenarios = ({}, None)
 
 
@@ -137,6 +138,14 @@ def test_13_unhealthy_broker_connection(run_backend):
     with open("tests/data/expected/13-unhealthy-broker-connection.json", "r") as f:
         response = requests.get("http://localhost:18083")
         assert response.status_code == 503
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_14], indirect=True)
+def test_14_basic_auth(run_backend):
+    with open("tests/data/expected/14-basic-auth.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 200
         assert json.loads(response.content.decode("utf-8")) == json.load(f)
 
 
