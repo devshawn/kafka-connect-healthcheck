@@ -15,6 +15,10 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         status_code = 503 if "unhealthy" in self.mock_name else 200
         try:
+            if "auth" in self.mock_name:
+                if "Basic" not in self.headers.get("Authorization"):
+                    self.response(401, payload="{}")
+
             if self.path == "/connectors":
                 with open(os.path.join(os.getcwd(), "tests/data/mocks/{}-connectors.json".format(self.mock_name)), "r") as f:
                     self.response(200, payload=f.read())
