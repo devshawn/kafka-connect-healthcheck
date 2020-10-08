@@ -22,10 +22,11 @@ from kafka_connect_healthcheck import helpers
 
 class Health:
 
-    def __init__(self, connect_url, worker_id, unhealthy_states, auth):
+    def __init__(self, connect_url, worker_id, unhealthy_states, auth, percentage_failed):
         self.connect_url = connect_url
         self.worker_id = worker_id
         self.unhealthy_states = [x.upper().strip() for x in unhealthy_states]
+        self.failed_threshold = percentage_failed * .01
         self.kwargs = {}
         if auth and ":" in auth:
             self.kwargs["auth"] = tuple(auth.split(":"))
@@ -37,7 +38,15 @@ class Health:
             connector_names = self.get_connector_names()
             connector_statuses = self.get_connectors_health(connector_names)
             self.handle_healthcheck(connector_statuses, health_result)
-            health_result["healthy"] = len(health_result["failures"]) == 0
+
+            connector_count = len(connector_names)
+            failure_count = len(health_result["failures"])
+
+            if failure_count > 0:
+                health_result["healthy"] = connector_count/failure_count <= self.failed_threshold
+            else:
+                health_result["healthy"] = True
+
         except Exception as ex:
             logging.error("Error while attempting to calculate health result. Assuming unhealthy. Error: {}".format(ex))
             logging.error(ex)

@@ -10,7 +10,7 @@ A simple healthcheck wrapper to monitor Kafka Connect.
     <img src="https://i.imgur.com/veSZDFf.png"/>
 </p>
 
-Kafka Connect Healthcheck is a server that wraps the Kafka Connect API and provides a singular API endpoint to determine the health of a Kafka Connect instance. This can be used to alert or take action on unhealthy connectors and tasks. 
+Kafka Connect Healthcheck is a server that wraps the Kafka Connect API and provides a singular API endpoint to determine the health of a Kafka Connect instance. This can be used to alert or take action on unhealthy connectors and tasks.
 
 This can be used in numerous ways. It can sit as a standalone service for monitoring purposes, it can be used as a sidecar container to mark Kafka Connect workers as unhealthy in Kubernetes, or it can be used to provide logs of when connectors/tasks failed and reasons for their failures.
 
@@ -38,7 +38,7 @@ kafka-connect-healthcheck
 The server will now be running on [localhost:18083][localhost].
 
 ### Docker
-The `kafka-connect-healthcheck` image can be found on Docker Hub. 
+The `kafka-connect-healthcheck` image can be found on Docker Hub.
 
 You can pull down the latest image by running:
 
@@ -55,7 +55,7 @@ docker run --rm -it -p 18083:18083 devshawn/kafka-connect-healthcheck
 The server will now be running on [localhost:18083][localhost].
 
 ## Configuration
-Kafka Connect Healthcheck can be configured via command-line arguments or by environment variables. 
+Kafka Connect Healthcheck can be configured via command-line arguments or by environment variables.
 
 #### Port
 The port for the `kafka-connect-healthcheck` API.
@@ -87,7 +87,7 @@ The worker ID to monitor (usually the IP address of the connect worker). If none
 **Note**: It is highly recommended to run an instance of the healthcheck for each worker if you're planning to restart containers based on the health.
 
 #### Unhealthy States
-A comma-separated list of connector and tasks states to be marked as unhealthy. 
+A comma-separated list of connector and tasks states to be marked as unhealthy.
 
 | Usage                 | Value                                       |
 |-----------------------|---------------------------------------------|
@@ -96,7 +96,19 @@ A comma-separated list of connector and tasks states to be marked as unhealthy.
 | Default Value         | `FAILED`                                    |
 | Valid Values          | `FAILED`, `PAUSED`, `UNASSIGNED`, `RUNNING` |
 
-**Note**: It's recommended to keep this defaulted to `FAILED`, but paused connectors or tasks can be marked as unhealthy by passing `FAILED,PAUSED`. 
+**Note**: It's recommended to keep this defaulted to `FAILED`, but paused connectors or tasks can be marked as unhealthy by passing `FAILED,PAUSED`.
+
+#### Percentage Failed
+A number between 1 and 100. If set, this is the percentage of connectors that must fail for the healthcheck to fail.
+
+| Usage                 | Value                                       |
+|-----------------------|---------------------------------------------|
+| Environment Variable  | `HEALTHCHECK_PERCENTAGE_FAILED`             |
+| Command-Line Argument | `--percentage-failed`                       |
+| Default Value         | `0`                                         |
+| Valid Values          | 1 to 100                                    |
+
+By default, **any** failures will cause the healthcheck to fail.
 
 #### Log Level
 The level of logs to be shown by the application.
