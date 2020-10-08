@@ -103,8 +103,8 @@ A number between 1 and 100. If set, this is the percentage of connectors that mu
 
 | Usage                 | Value                                       |
 |-----------------------|---------------------------------------------|
-| Environment Variable  | `HEALTHCHECK_PERCENTAGE_FAILED`             |
-| Command-Line Argument | `--percentage-failed`                       |
+| Environment Variable  | `HEALTHCHECK_FAILURE_THRESHOLD_PERCENTAGE`  |
+| Command-Line Argument | `--failure-threshold-percentage`            |
 | Default Value         | `0`                                         |
 | Valid Values          | 1 to 100                                    |
 

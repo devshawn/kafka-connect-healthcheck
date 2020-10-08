@@ -52,9 +52,9 @@ def get_parser():
                         help="A comma separated lists of connector and task states to be marked as unhealthy. Default: FAILED."
                         )
 
-    parser.add_argument("--percentage-failed",
-                        default=os.environ.get("HEALTHCHECK_PERCENTAGE_FAILED", 0),
-                        dest="percentage_failed",
+    parser.add_argument("--failure-threshold-percentage",
+                        default=os.environ.get("HEALTHCHECK_FAILURE_THRESHOLD_PERCENTAGE", 0),
+                        dest="failure_threshold_percentage",
                         type=int,
                         nargs="?",
                         help="A number between 1 and 100. If set, this is the percentage of connectors that must fail for the healthcheck to fail."
