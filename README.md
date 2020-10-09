@@ -86,6 +86,16 @@ The worker ID to monitor (usually the IP address of the connect worker). If none
 
 **Note**: It is highly recommended to run an instance of the healthcheck for each worker if you're planning to restart containers based on the health.
 
+#### Considered Containers
+A comma-separated list of which type of kafka connect container to be considered in the healthcheck calculation.
+
+| Usage                 | Value                                       |
+|-----------------------|---------------------------------------------|
+| Environment Variable  | `HEALTHCHECK_CONSIDERED_CONTAINERS`         |
+| Command-Line Argument | `--considered-containers`                   |
+| Default Value         | `CONNECTOR,TASK`                            |
+| Valid Values          | `CONNECTOR`, `TASK`                         |
+
 #### Unhealthy States
 A comma-separated list of connector and tasks states to be marked as unhealthy.
 
