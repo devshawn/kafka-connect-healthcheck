@@ -55,10 +55,14 @@ class Health:
             if container_count > 0:
                 health_result["failure_rate"] = failure_count/container_count
             else:
-                health_result["failure_rate"] = 0
+                health_result["failure_rate"] = 0.0
 
             health_result["failure_threshold"] = self.failure_threshold
             health_result["healthy"] = health_result["failure_rate"] <= health_result["failure_threshold"]
+
+            # broker errors override any failure calculation
+            if any([f for f in health_result["failures"] if f["type"] == "broker"]):
+                health_result["healthy"] = False
 
         except Exception as ex:
             logging.error("Error while attempting to calculate health result. Assuming unhealthy. Error: {}".format(ex))
