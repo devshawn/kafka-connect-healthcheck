@@ -108,7 +108,7 @@ A comma-separated list of connector and tasks states to be marked as unhealthy.
 
 **Note**: It's recommended to keep this defaulted to `FAILED`, but paused connectors or tasks can be marked as unhealthy by passing `FAILED,PAUSED`.
 
-#### Percentage Failed
+#### Failure Threshold Percentage
 A number between 1 and 100. If set, this is the percentage of connectors that must fail for the healthcheck to fail.
 
 | Usage                 | Value                                       |
