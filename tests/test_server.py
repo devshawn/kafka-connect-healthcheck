@@ -20,6 +20,11 @@ scenario_11 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "my.worker.name:8083"}, "11-hea
 scenario_12 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "my.worker.name:8083"}, "12-unhealthy-task-with-trace")
 scenario_13 = ({"HEALTHCHECK_CONNECT_WORKER_ID": "unhealthy.worker:8083"}, "13-unhealthy-broker-connection")
 scenario_14 = ({"HEALTHCHECK_BASIC_AUTH": "username:password"}, "14-basic-auth")
+scenario_15 = ({"HEALTHCHECK_FAILURE_THRESHOLD_PERCENTAGE": "10"}, "15-unhealthy-threshold")
+scenario_16 = ({"HEALTHCHECK_FAILURE_THRESHOLD_PERCENTAGE": "50"}, "16-healthy-threshold")
+scenario_17 = ({"HEALTHCHECK_CONSIDERED_CONTAINERS": "CONNECTOR"}, "17-healthy-container-connector")
+scenario_18 = ({"HEALTHCHECK_CONSIDERED_CONTAINERS": "TASK"}, "18-healthy-container-task")
+scenario_19 = ({"HEALTHCHECK_CONSIDERED_CONTAINERS": "TASK"}, "19-unhealthy-container-task")
 other_scenarios = ({}, None)
 
 
@@ -146,6 +151,46 @@ def test_14_basic_auth(run_backend):
     with open("tests/data/expected/14-basic-auth.json", "r") as f:
         response = requests.get("http://localhost:18083")
         assert response.status_code == 200
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_15], indirect=True)
+def test_15_unhealthy_threshold(run_backend):
+    with open("tests/data/expected/15-unhealthy-threshold.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 503
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_16], indirect=True)
+def test_16_healthy_threshold(run_backend):
+    with open("tests/data/expected/16-healthy-threshold.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 200
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_17], indirect=True)
+def test_17_healthy_container_connector(run_backend):
+    with open("tests/data/expected/17-healthy-container-connector.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 200
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_18], indirect=True)
+def test_18_healthy_container_task(run_backend):
+    with open("tests/data/expected/18-healthy-container-task.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 200
+        assert json.loads(response.content.decode("utf-8")) == json.load(f)
+
+
+@pytest.mark.parametrize("run_backend", [scenario_19], indirect=True)
+def test_19_unhealthy_container_task(run_backend):
+    with open("tests/data/expected/19-unhealthy-container-task.json", "r") as f:
+        response = requests.get("http://localhost:18083")
+        assert response.status_code == 503
         assert json.loads(response.content.decode("utf-8")) == json.load(f)
 
 
