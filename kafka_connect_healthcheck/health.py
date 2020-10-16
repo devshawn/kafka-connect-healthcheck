@@ -53,7 +53,7 @@ class Health:
 
             # guards against division by zero. if we have no connectors or tasks we are deciding to pass
             if container_count > 0:
-                health_result["failure_rate"] = failure_count/container_count
+                health_result["failure_rate"] = failure_count / container_count
             else:
                 health_result["failure_rate"] = 0.0
 
@@ -79,7 +79,7 @@ class Health:
     def handle_healthcheck(self, connector_statuses, health_result):
         connectors_on_this_worker = False
         for connector in connector_statuses:
-            if self.is_on_this_worker(connector["worker_id"]):
+            if self.is_on_this_worker(connector["worker_id"]) and "connector" in self.considered_containers:
                 connectors_on_this_worker = True
                 if self.is_in_unhealthy_state(connector["state"]):
                     logging.warning("Connector '{}' is unhealthy in failure state: {}".format(connector["name"], connector["state"]))
@@ -107,24 +107,25 @@ class Health:
             })
 
     def handle_task_healthcheck(self, connector, health_result):
-        for task in connector["tasks"]:
-            if self.is_on_this_worker(task["worker_id"]):
-                if self.is_in_unhealthy_state(task["state"]):
-                    logging.warning("Connector '{}' task '{}' is unhealthy in failure state: {}".format(
-                        connector["name"], task["id"], task["state"]
-                    ))
-                    health_result["failures"].append({
-                        "type": "task",
-                        "connector": connector["name"],
-                        "id": task["id"],
-                        "state": task["state"],
-                        "worker_id": task["worker_id"],
-                        "trace": task.get("trace", None)
-                    })
-                else:
-                    logging.info("Connector '{}' task '{}' is healthy in state: {}".format(
-                        connector["name"], task["id"], task["state"]
-                    ))
+        if "task" in self.considered_containers:
+            for task in connector["tasks"]:
+                if self.is_on_this_worker(task["worker_id"]):
+                    if self.is_in_unhealthy_state(task["state"]):
+                        logging.warning("Connector '{}' task '{}' is unhealthy in failure state: {}".format(
+                            connector["name"], task["id"], task["state"]
+                        ))
+                        health_result["failures"].append({
+                            "type": "task",
+                            "connector": connector["name"],
+                            "id": task["id"],
+                            "state": task["state"],
+                            "worker_id": task["worker_id"],
+                            "trace": task.get("trace", None)
+                        })
+                    else:
+                        logging.info("Connector '{}' task '{}' is healthy in state: {}".format(
+                            connector["name"], task["id"], task["state"]
+                        ))
 
     def get_connectors_health(self, connector_names):
         statuses = []
