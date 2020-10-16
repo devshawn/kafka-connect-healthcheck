@@ -3,5 +3,7 @@
     "failure_states": [
         "FAILED"
     ],
+    "failure_rate": 0.0,
+    "failure_threshold": 0.0,
     "healthy": true
 }

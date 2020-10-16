@@ -18,5 +18,7 @@
     "failure_states": [
         "FAILED"
     ],
+    "failure_rate": 1.0,
+    "failure_threshold": 0.0,
     "healthy": false
 }

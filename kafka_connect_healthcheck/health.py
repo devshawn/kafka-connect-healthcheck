@@ -22,10 +22,12 @@ from kafka_connect_healthcheck import helpers
 
 class Health:
 
-    def __init__(self, connect_url, worker_id, unhealthy_states, auth):
+    def __init__(self, connect_url, worker_id, unhealthy_states, auth, failure_threshold_percentage, considered_containers):
         self.connect_url = connect_url
         self.worker_id = worker_id
         self.unhealthy_states = [x.upper().strip() for x in unhealthy_states]
+        self.failure_threshold = failure_threshold_percentage * .01
+        self.considered_containers = [x.lower().strip() for x in considered_containers]
         self.kwargs = {}
         if auth and ":" in auth:
             self.kwargs["auth"] = tuple(auth.split(":"))
@@ -37,7 +39,31 @@ class Health:
             connector_names = self.get_connector_names()
             connector_statuses = self.get_connectors_health(connector_names)
             self.handle_healthcheck(connector_statuses, health_result)
-            health_result["healthy"] = len(health_result["failures"]) == 0
+
+            connector_count = len(connector_names)
+            task_count = sum(len(c["tasks"]) for c in connector_statuses)
+
+            container_count = 0
+            if "connector" in self.considered_containers:
+                container_count += connector_count
+            if "task" in self.considered_containers:
+                container_count += task_count
+
+            failure_count = len([f for f in health_result["failures"] if f["type"] in self.considered_containers])
+
+            # guards against division by zero. if we have no connectors or tasks we are deciding to pass
+            if container_count > 0:
+                health_result["failure_rate"] = failure_count/container_count
+            else:
+                health_result["failure_rate"] = 0.0
+
+            health_result["failure_threshold"] = self.failure_threshold
+            health_result["healthy"] = health_result["failure_rate"] <= health_result["failure_threshold"]
+
+            # broker errors override any failure calculation
+            if any([f for f in health_result["failures"] if f["type"] == "broker"]):
+                health_result["healthy"] = False
+
         except Exception as ex:
             logging.error("Error while attempting to calculate health result. Assuming unhealthy. Error: {}".format(ex))
             logging.error(ex)

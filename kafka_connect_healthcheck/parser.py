@@ -52,6 +52,21 @@ def get_parser():
                         help="A comma separated lists of connector and task states to be marked as unhealthy. Default: FAILED."
                         )
 
+    parser.add_argument("--considered-containers",
+                        default=os.environ.get("HEALTHCHECK_CONSIDERED_CONTAINERS", "CONNECTOR,TASK").upper(),
+                        dest="considered_containers",
+                        nargs="?",
+                        help="A comma separated lists of container types to consider for failure calculations. Default: CONNECTOR,TASK."
+                        )
+
+    parser.add_argument("--failure-threshold-percentage",
+                        default=os.environ.get("HEALTHCHECK_FAILURE_THRESHOLD_PERCENTAGE", 0),
+                        dest="failure_threshold_percentage",
+                        type=int,
+                        nargs="?",
+                        help="A number between 1 and 100. If set, this is the percentage of connectors that must fail for the healthcheck to fail."
+                        )
+
     parser.add_argument("--basic-auth",
                         default=os.environ.get("HEALTHCHECK_BASIC_AUTH", ""),
                         dest="basic_auth",
