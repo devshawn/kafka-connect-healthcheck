@@ -22,12 +22,13 @@ from kafka_connect_healthcheck import helpers
 
 class Health:
 
-    def __init__(self, connect_url, worker_id, unhealthy_states, auth, failure_threshold_percentage, considered_containers):
+    def __init__(self, connect_url, worker_id, unhealthy_states, auth, failure_threshold_percentage, considered_containers, failure_less_tasks):
         self.connect_url = connect_url
         self.worker_id = worker_id
         self.unhealthy_states = [x.upper().strip() for x in unhealthy_states]
         self.failure_threshold = failure_threshold_percentage * .01
         self.considered_containers = [x.lower().strip() for x in considered_containers]
+        self.failure_less_tasks = failure_less_tasks
         self.kwargs = {}
         if auth and ":" in auth:
             self.kwargs["auth"] = tuple(auth.split(":"))
@@ -108,6 +109,21 @@ class Health:
 
     def handle_task_healthcheck(self, connector, health_result):
         if "task" in self.considered_containers:
+            if self.failure_less_tasks is True:
+                logging.debug("Connector '{}' state: {} tasks running: '{}' desired: '{}'".format(
+                    connector["name"], connector["state"], len(connector["tasks"]), connector["tasks_max"]
+                ))
+                if self.has_less_tasks(len(connector["tasks"]), connector["tasks_max"]):
+                    logging.warning("Connector '{}' is healthy in state: {} but has less tasks ({}) than configured ({}). Assuming unhealthy.".format(
+                        connector["name"], connector["state"], len(connector["tasks"]), connector["tasks_max"]
+                    ))
+                    health_result["failures"].append({
+                        "type": "task",
+                        "connector": connector["name"],
+                        "state": connector["state"],
+                        "tasks_count": len(connector["tasks"]),
+                        "tasks_desired": connector["tasks_max"]
+                    })
             for task in connector["tasks"]:
                 if self.is_on_this_worker(task["worker_id"]):
                     if self.is_in_unhealthy_state(task["state"]):
@@ -135,12 +151,15 @@ class Health:
 
     def get_connector_health(self, connector_name):
         connector_status = self.get_connector_status(connector_name)
+        connector_details = self.get_connector_details(connector_name)
+        connector_tasks_max = connector_details['config']['tasks.max']
         connector_state = connector_status["connector"]["state"].upper()
         connector_worker = connector_status["connector"]["worker_id"]
         return {
             "name": connector_name,
             "state": connector_state,
             "worker_id": connector_worker,
+            "tasks_max": connector_tasks_max,
             "tasks": connector_status["tasks"]
         }
 
@@ -165,6 +184,9 @@ class Health:
 
     def is_on_this_worker(self, response_worker_id):
         return response_worker_id.lower() == self.worker_id.lower() if self.worker_id is not None else True
+
+    def has_less_tasks(self, tasks_count, tasks_max):
+        return True if int(tasks_count) < int(tasks_max) else False
 
     def log_initialization_values(self):
         logging.info("Server will report unhealthy for states: '{}'".format(", ".join(self.unhealthy_states)))

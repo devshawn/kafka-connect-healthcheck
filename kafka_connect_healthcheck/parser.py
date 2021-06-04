@@ -67,6 +67,13 @@ def get_parser():
                         help="A number between 1 and 100. If set, this is the percentage of connectors that must fail for the healthcheck to fail."
                         )
 
+    parser.add_argument("--failure-less-tasks",
+                        default=os.environ.get("HEALTHCHECK_FAILURE_LESS_TASKS", True),
+                        dest="failure_less_tasks",
+                        action='store_true',
+                        help="If set True, will validate if the number of tasks running was less them tasks.max for the healthcheck to fail. Default: True"
+                        )
+
     parser.add_argument("--basic-auth",
                         default=os.environ.get("HEALTHCHECK_BASIC_AUTH", ""),
                         dest="basic_auth",
