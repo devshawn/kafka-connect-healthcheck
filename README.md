@@ -120,6 +120,18 @@ A number between 1 and 100. If set, this is the percentage of connectors that mu
 
 By default, **any** failures will cause the healthcheck to fail.
 
+#### Failure Less Tasks
+If `True`, it will validate if the number of running tasks is less them tasks.max for the healthcheck to fail.
+
+| Usage                 | Value                                       |
+|-----------------------|---------------------------------------------|
+| Environment Variable  | `HEALTHCHECK_FAILURE_LESS_TASKS`  |
+| Command-Line Argument | `--failure-less-tasks`            |
+| Default Value         | `True`                                         |
+| Valid Values          | `True` or `False`                                    |
+
+By default, **any** failures will cause the healthcheck to fail.
+
 #### Log Level
 The level of logs to be shown by the application.
 
